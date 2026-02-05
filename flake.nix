@@ -8,7 +8,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixCats = {
-      url = "path:/home/vasu/rudra/modules/nixCats";
+      url = "path:./modules/nixCats";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
@@ -41,7 +41,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-      nixosConfigurations.default = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.summerpockets = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
@@ -61,7 +61,7 @@
               ];
             }
           )
-          ./hosts/default/configuration.nix
+          ./hosts/summerpockets/configuration.nix
           inputs.stylix.nixosModules.stylix
           inputs.home-manager.nixosModules.default
         ];

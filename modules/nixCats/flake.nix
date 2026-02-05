@@ -145,7 +145,7 @@
               pgformatter
               nodePackages.eslint
               emmet-ls
-              nodePackages."@prisma/language-server"
+              # nodePackages."@prisma/language-server"
             ];
             kickstart-debug = [
               delve
