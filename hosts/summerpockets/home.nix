@@ -29,12 +29,12 @@ in {
 
       # Config directories
       ".config/alacritty".source = ../../dotfiles/.config/alacritty;
-      ".config/dunst".source = ../../dotfiles/.config/dunst;
+      # ".config/dunst".source = ../../dotfiles/.config/dunst;  # Removed: DMS provides notification system
       ".config/fastfetch".source = ../../dotfiles/.config/fastfetch;
       ".config/kitty".source = ../../dotfiles/.config/kitty;
       ".config/mpv".source = ../../dotfiles/.config/mpv;
       ".config/tmux/tmux.conf".source = ../../dotfiles/.config/tmux/tmux.conf;
-      ".config/waybar".source = ../../dotfiles/.config/waybar;
+      # ".config/waybar".source = ../../dotfiles/.config/waybar;  # Removed: DMS provides panel
       ".config/yazi".source = ../../dotfiles/.config/yazi;
       ".config/wezterm".source = ../../dotfiles/.config/wezterm;
       ".config/ghostty".source = ../../dotfiles/.config/ghostty;
@@ -87,9 +87,7 @@ in {
   };
 
   imports = [
-  #  ../../config/rofi/rofi.nix
-  #  ../../config/wlogout.nix
-   # inputs.dms.homeManagerModules.dank-material-shell
+    inputs.dms.homeModules.dank-material-shell
   ];
 
   # Styling

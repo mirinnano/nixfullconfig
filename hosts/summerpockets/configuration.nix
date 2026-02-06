@@ -97,9 +97,9 @@ in
    ];
 };
   environment.variables = {
-  # GTK_IM_MODULE = "fcitx5";
-  #  QT_IM_MODULE = "fcitx5";
-  # XMODIFIERS = "@im=fcitx5";
+    GTK_IM_MODULE = "fcitx5";
+    QT_IM_MODULE = "fcitx5";
+    XMODIFIERS = "@im=fcitx5";
   };
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -447,19 +447,19 @@ in
     noto-fonts-cjk-serif
   ];
 
- # xdg.portal = {
- #   enable = true;
- #   wlr.enable = true;
- #   extraPortals = [
- #     pkgs.xdg-desktop-portal-gtk
- #     pkgs.xdg-desktop-portal
- #   ];
- #   configPackages = [
- #     pkgs.xdg-desktop-portal-gtk
- #     pkgs.xdg-desktop-portal-hyprland
- #     pkgs.xdg-desktop-portal
- #   ];
- # };
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal
+    ];
+    configPackages = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-hyprland
+      pkgs.xdg-desktop-portal
+    ];
+  };
 
   services = {
     xserver = {
