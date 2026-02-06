@@ -7,6 +7,10 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell"; # 安定版なら "/stable" を付与
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixCats = {
       url = "path:./modules/nixCats";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -14,12 +18,12 @@
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     hyprpanel.url = "github:Jas-SinghFSU/HyprPanel";
   };
-
   outputs =
     {
       self,
       nixpkgs,
       nixCats,
+      dms,
       hyprpanel,
       ...
     }@inputs:

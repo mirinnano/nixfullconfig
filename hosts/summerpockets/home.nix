@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: let
   userName = "mirin";
@@ -86,8 +87,9 @@ in {
   };
 
   imports = [
-    ../../config/rofi/rofi.nix
-    ../../config/wlogout.nix
+  #  ../../config/rofi/rofi.nix
+  #  ../../config/wlogout.nix
+   # inputs.dms.homeManagerModules.dank-material-shell
   ];
 
   # Styling
@@ -109,7 +111,7 @@ in {
     style.name = "kvantum";
     platformTheme.name = "qtct";
   };
-
+ 
   services.hypridle = {
     settings = {
       general = {

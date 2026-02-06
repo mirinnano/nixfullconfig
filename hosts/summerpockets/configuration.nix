@@ -21,11 +21,18 @@ in
     ../../modules/nvidia-prime-drivers.nix
     ../../modules/intel-drivers.nix
     inputs.home-manager.nixosModules.default
+    inputs.dms.nixosModules.dank-material-shell
   ];
   nixpkgs.config.permittedInsecurePackages = [
   "qtwebengine-5.15.19"
   "ventoy-1.1.10"
 ];
+ programs.dank-material-shell = {
+  enable = true;
+  systemd.enable = true;
+  enableSystemMonitoring = true;
+ };
+  
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
     kernelModules = [ "v4l2loopback" ];
@@ -50,6 +57,7 @@ in
         device = "nodev";
         efiSupport = true;
         useOSProber = true;
+        configurationLimit = 30;
       };
     };
     tmp = {
@@ -242,7 +250,7 @@ in
     mongodb-compass
     gcc
     openssl
-   
+    nodejs
 
     # Frappe Bench
     redis
@@ -423,11 +431,11 @@ in
   ];
 
   environment.etc."sddm/wayland-sessions/hyprland.desktop".text = ''
-    [Desktop Entry]
-    Name=Hyprland
-    Exec=Hyprland
-    Type=Application
-  '';
+ #   [Desktop Entry]
+ #   Name=Hyprland
+ #   Exec=Hyprland
+ #   Type=Application
+#  '';
 
   fonts.packages = with pkgs; [
     noto-fonts-color-emoji
@@ -439,19 +447,19 @@ in
     noto-fonts-cjk-serif
   ];
 
-  xdg.portal = {
-    enable = true;
-    wlr.enable = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal
-    ];
-    configPackages = [
-      pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal
-    ];
-  };
+ # xdg.portal = {
+ #   enable = true;
+ #   wlr.enable = true;
+ #   extraPortals = [
+ #     pkgs.xdg-desktop-portal-gtk
+ #     pkgs.xdg-desktop-portal
+ #   ];
+ #   configPackages = [
+ #     pkgs.xdg-desktop-portal-gtk
+ #     pkgs.xdg-desktop-portal-hyprland
+ #     pkgs.xdg-desktop-portal
+ #   ];
+ # };
 
   services = {
     xserver = {
@@ -624,7 +632,7 @@ in
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 7d";
+      options = "--delete-older-than 14d";
     };
   };
 
