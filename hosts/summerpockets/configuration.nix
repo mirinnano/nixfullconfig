@@ -22,6 +22,7 @@ in
     ../../modules/intel-drivers.nix
     inputs.home-manager.nixosModules.default
     inputs.dms.nixosModules.dank-material-shell
+    inputs.dms.nixosModules.greeter
   ];
   nixpkgs.config.permittedInsecurePackages = [
   "qtwebengine-5.15.19"
@@ -31,6 +32,10 @@ in
   enable = true;
   systemd.enable = true;
   enableSystemMonitoring = true;
+  greeter = {
+    enable = true;
+    compositor.name = "hyprland";
+  };
  };
   
   boot = {
@@ -90,16 +95,21 @@ in
   time.timeZone = timeZone;
   i18n.inputMethod = {
    enabled = "fcitx5";
-   fcitx5.addons = with pkgs; [
-     fcitx5-mozc
-     fcitx5-gtk
-     qt6Packages.fcitx5-configtool 
-   ];
+   fcitx5 = {
+     addons = with pkgs; [
+       fcitx5-mozc
+       fcitx5-gtk
+       fcitx5-with-addons
+       fcitx5-skk
+       qt6Packages.fcitx5-configtool
+     ];
+     waylandFrontend = true;
+   };
 };
   environment.variables = {
-    GTK_IM_MODULE = "fcitx5";
-    QT_IM_MODULE = "fcitx5";
-    XMODIFIERS = "@im=fcitx5";
+   # GTK_IM_MODULE = "fcitx5";
+   # QT_IM_MODULE = "fcitx5";
+   # XMODIFIERS = "@im=fcitx5";
   };
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -163,6 +173,15 @@ in
       };
     };
   };
+
+  # Gaming
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+    gamescopeSession.enable = true;
+  };
+  programs.gamemode.enable = true;
 
   virtualisation = {
     docker = {
@@ -289,7 +308,7 @@ in
     exfatprogs
 
     inputs.nixCats.packages.${pkgs.system}.nvim
-    # inputs.ghostty.packages.${pkgs.system}.default
+    pkgs.ghostty
 
     # File management and archives
     yazi
@@ -349,6 +368,11 @@ in
     tor-browser
 
     # Gaming and entertainment
+    lutris
+    mangohud
+    gamescope
+    gamemode
+    protonup-qt
     # stremio
 
     # System utilities
@@ -471,9 +495,9 @@ in
       videoDrivers = [ "modesetting" ];
     };
     displayManager.sddm = {
-      enable = true;
-      wayland.enable = true; # Enable Wayland backend
-      theme = "rose-pine"; # Your custom theme name
+      enable = false;  # Disabled: Using DankGreeter
+      wayland.enable = true;
+      theme = "rose-pine";
     };
     # greetd = {
     #   enable = true;
@@ -657,7 +681,7 @@ in
     "text/plain" = "nvim.desktop";
 
     # Terminal
-    "x-scheme-handler/terminal" = "kitty.desktop";
+    "x-scheme-handler/terminal" = "alacritty.desktop";
 
     # Videos
     "video/quicktime" = "mpv-2.desktop";

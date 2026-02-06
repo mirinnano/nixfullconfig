@@ -31,10 +31,11 @@ in {
       ".config/alacritty".source = ../../dotfiles/.config/alacritty;
       # ".config/dunst".source = ../../dotfiles/.config/dunst;  # Removed: DMS provides notification system
       ".config/fastfetch".source = ../../dotfiles/.config/fastfetch;
+      ".config/fcitx5".source = ../../dotfiles/.config/fcitx5;
       ".config/kitty".source = ../../dotfiles/.config/kitty;
       ".config/mpv".source = ../../dotfiles/.config/mpv;
       ".config/tmux/tmux.conf".source = ../../dotfiles/.config/tmux/tmux.conf;
-      # ".config/waybar".source = ../../dotfiles/.config/waybar;  # Removed: DMS provides panel
+      # ".config/waybar".source = ../../dotfiles/.config/waybar;  # Removed: DMS panel working
       ".config/yazi".source = ../../dotfiles/.config/yazi;
       ".config/wezterm".source = ../../dotfiles/.config/wezterm;
       ".config/ghostty".source = ../../dotfiles/.config/ghostty;
@@ -49,7 +50,7 @@ in {
       # Default applications
       EDITOR = "nvim";
       VISUAL = "nvim";
-      TERMINAL = "kitty";
+      TERMINAL = "alacritty";
       BROWSER = "zen";
 
       # XDG Base Directories
@@ -88,7 +89,11 @@ in {
 
   imports = [
     inputs.dms.homeModules.dank-material-shell
+    inputs.danksearch.homeModules.default
   ];
+
+  # DankSearch configuration
+  programs.dsearch.enable = true;
 
   # Styling
   stylix.targets.waybar.enable = false;
