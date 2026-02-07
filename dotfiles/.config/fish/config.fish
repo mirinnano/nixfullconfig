@@ -89,11 +89,15 @@ end
 abbr load-abbr 'load_extended_abbr'
 
 # ==========================================
-# History
+# History & Variables
 # ==========================================
 
+# Use global variables instead of universal to avoid /nix/store writes
 set -g fish_history_max_file 100000
 set -g fish_history_max_size 100000
+
+# Disable universal variables completely
+set -g fish_features no-implicit-universal-variables
 
 # ==========================================
 # Key Bindings
@@ -110,12 +114,6 @@ fish_vi_key_bindings
 if type -q starship
     starship init fish | source
 end
-
-# Syntax highlighting colors
-set -g fish_color_autosuggestion brblack
-set -g fish_color_command brgreen
-set -g fish_color_error red
-set -g fish_color_param cyan
 
 # ==========================================
 # Functions
@@ -149,8 +147,14 @@ end
 # Optimizations
 # ==========================================
 
-# Disable greeting
+# Disable greeting (use global, not universal)
 set -g fish_greeting
 
-# Better tab completion
+# Better tab completion (global, not universal)
 set -g fish_autosuggestion_enabled 1
+
+# Syntax highlighting colors (global, not universal)
+set -g fish_color_autosuggestion brblack
+set -g fish_color_command brgreen
+set -g fish_color_error red
+set -g fish_color_param cyan

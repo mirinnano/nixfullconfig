@@ -341,12 +341,21 @@ in
     fish = {
       enable = true;
       interactiveShellInit = ''
-        # Set fish variables path to writable location
-        set -gx XDG_DATA_HOME "$HOME/.local/share"
-        set -gx fish_variables_path "$XDG_DATA_HOME/fish/fish_variables"
+        # Disable Fish universal variables (causes /nix/store write errors)
+        set -U fish_features no-implicit-universal-variables
 
-        # Ensure the directory exists
+        # Set XDG directories for writable Fish data
+        set -gx XDG_DATA_HOME "$HOME/.local/share"
+        set -gx XDG_CONFIG_HOME "$HOME/.config"
+
+        # Ensure Fish data directory exists
         mkdir -p "$XDG_DATA_HOME/fish"
+
+        # SetFish variables to writable location (not /nix/store)
+        set -gx fish_user_paths $HOME/.local/bin $HOME/.cargo/bin $HOME/rudra/scripts
+
+        # Disable universal variable storage
+        set -gx fish_greeting
       '';
     };
   };
