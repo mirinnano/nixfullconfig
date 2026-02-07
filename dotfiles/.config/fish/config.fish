@@ -60,6 +60,13 @@ abbr cm 'claude --dangerously-skip-permissions'
 abbr ssn 'sudo shutdown now'
 abbr srn 'sudo reboot now'
 
+# VPN
+abbr mullvad-connect 'mullvad connect'
+abbr mullvad-disconnect 'mullvad disconnect'
+abbr mullvad-status 'mullvad status'
+abbr mullvad-relist 'mullvad relay list'
+abbr mullvad-set 'mullvad relay set'
+
 # ==========================================
 # Load Extended Abbreviations (Lazy Load)
 # ==========================================

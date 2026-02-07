@@ -189,6 +189,12 @@ in
 
   networking = {
     hostName = hostName;
+    # Use Cloudflare DNS (1.1.1.1 and 1.0.0.1)
+    nameservers = [ "1.1.1.1" "1.0.0.1" ];
+    # Fallback DNS from Cloudflare
+    dhcpcd = {
+      extraConfig = "nohook resolv.conf";
+    };
     networkmanager = {
       enable = true;
       # Don't manage Waydroid interfaces
@@ -197,14 +203,17 @@ in
         "wlan0"
         "utun*"
       ];
+      dns = "none";
     };
     timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
+    # Firewall configuration
     firewall = {
       allowedTCPPorts = [ 8003 ];
-    };
-    firewall = {
       checkReversePath = "loose";
+      # Allow Mullvad VPN
+      allowedUDPPorts = [ 51820 ];  # WireGuard
     };
+  };
   };
 
   time.timeZone = timeZone;
@@ -476,6 +485,7 @@ in
     aria2
     qbittorrent
     cloudflare-warp
+    mullvad-vpn
     tailscale
 
     # Audio and video
@@ -510,7 +520,6 @@ in
     # Browsers
     firefox
     google-chrome
-    tor-browser
 
     # Gaming and entertainment
     lutris
@@ -665,6 +674,7 @@ in
     # };
     logind.settings.Login.HandlePowerKey = "suspend";
     cloudflare-warp.enable = true;
+    mullvad-vpn.enable = true;
     # supergfxd.enable = true;
     # asusd = {
     #   enable = true;
