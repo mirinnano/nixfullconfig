@@ -214,7 +214,6 @@ in
       allowedUDPPorts = [ 51820 ];  # WireGuard
     };
   };
-  };
 
   time.timeZone = timeZone;
   i18n.inputMethod = {
@@ -350,9 +349,6 @@ in
     fish = {
       enable = true;
       interactiveShellInit = ''
-        # Disable Fish universal variables (causes /nix/store write errors)
-        set -U fish_features no-implicit-universal-variables
-
         # Set XDG directories for writable Fish data
         set -gx XDG_DATA_HOME "$HOME/.local/share"
         set -gx XDG_CONFIG_HOME "$HOME/.config"
@@ -360,10 +356,10 @@ in
         # Ensure Fish data directory exists
         mkdir -p "$XDG_DATA_HOME/fish"
 
-        # SetFish variables to writable location (not /nix/store)
+        # Set PATH variables (global, not universal)
         set -gx fish_user_paths $HOME/.local/bin $HOME/.cargo/bin $HOME/rudra/scripts
 
-        # Disable universal variable storage
+        # Disable greeting
         set -gx fish_greeting
       '';
     };
