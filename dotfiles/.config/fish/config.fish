@@ -16,6 +16,9 @@ set -gx XDG_CONFIG_HOME "$HOME/.config"
 set -gx XDG_STATE_HOME "$HOME/.local/state"
 set -gx XDG_CACHE_HOME "$HOME/.cache"
 
+# Fish variables directory (writable location)
+set -gx fish_variables_path "$XDG_DATA_HOME/fish/fish_variables"
+
 # ==========================================
 # History
 # ==========================================
@@ -332,17 +335,10 @@ function fish_user_key_bindings
 end
 
 # ==========================================
-# Plugins (Fisher - Fish plugin manager)
+# Plugins
 # ==========================================
-
-# Install Fisher if not present
-if not functions -q fisher
-    echo "Installing Fisher..."
-    curl -sL https://git.io/fisher | source && fisher install fzf
-end
-
-# Essential plugins
-set -g fish_plugins autopair-fish fish-abbreviations fish-autosuggestions
+# Note: Use NixOS to manage Fish plugins for declarative setup
+# Plugins should be configured in NixOS configuration, not here
 
 # ==========================================
 # Colors & Theme
@@ -390,12 +386,8 @@ end
 # Welcome Message
 # ==========================================
 
-function fish_greeting
-    # Show neofetch or fastfetch
-    if type -q fastfetch
-        fastfetch
-    end
-end
+# Disable greeting for cleaner startup
+set -g fish_greeting
 
 # ==========================================
 # User-specific paths
@@ -420,13 +412,5 @@ end
 # Optimizations
 # ==========================================
 
-# Disable greeting
-set -g fish_greeting
-
 # Better tab completion
 set -g fish_autosuggestion_enabled 1
-
-# Faster command-not-found handling
-if type -q command-not-found
-    command-not-found
-end
