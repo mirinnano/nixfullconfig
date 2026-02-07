@@ -338,6 +338,17 @@ in
         thunar-volman
       ];
     };
+    fish = {
+      enable = true;
+      interactiveShellInit = ''
+        # Set fish variables path to writable location
+        set -gx XDG_DATA_HOME "$HOME/.local/share"
+        set -gx fish_variables_path "$XDG_DATA_HOME/fish/fish_variables"
+
+        # Ensure the directory exists
+        mkdir -p "$XDG_DATA_HOME/fish"
+      '';
+    };
   };
 
   nixpkgs = {

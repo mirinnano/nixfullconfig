@@ -20,6 +20,5 @@ in {
         thunderbird
       ];
     };
-    programs.fish.enable = true;
   };
 }
