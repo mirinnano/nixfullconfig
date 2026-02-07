@@ -74,18 +74,6 @@ in
     kernelModules = [ "v4l2loopback" "tap" "vhost_net" "vhost_vsock" ];
     extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
 
-    # CPU & Gaming performance optimizations
-    kernelParams = [
-      # NVIDIA performance
-      "nvidia.NvReg_RegistryDwords=PerfLevelSrc=0x2222"  # Maximum performance
-      "nvidia_drm.fbdev=1"
-      # CPU latency reduction for gaming
-      "processor.max_cstate=1"  # Limit C-states to reduce latency
-      "idle=poll"  # Use idle=poll instead of C-states (gaming)
-      # I/O performance
-      "iommu=pt"  # Pass-through for better GPU performance
-    ];
-
     # NVIDIAモジュールを早期ロード（スリープ修正）
     initrd.kernelModules = [
       "nvidia"
@@ -152,6 +140,11 @@ in
 
       # Gaming optimization
       "split_lock_detect=off"  # Better game compatibility
+
+      # CPU & Gaming performance (reduce input lag)
+      "processor.max_cstate=1"  # Limit C-states to reduce latency
+      "idle=poll"  # Use idle=poll instead of deep C-states for gaming
+      "iommu=pt"  # Pass-through for better GPU performance
 
       # NVIDIA サスペンド/レジューム修正（重要！）
       "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
