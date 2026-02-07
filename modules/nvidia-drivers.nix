@@ -55,11 +55,17 @@ in {
       Section "Device"
         Identifier "NVIDIA GPU"
         Driver "nvidia"
-        # Performance optimizations
+        # Performance optimizations for gaming
         Option "MetaModes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
         Option "AllowIndirectGLXProtocol" "off"
         Option "TripleBuffer" "on"
         Option "BaseProfile" "high_performance"
+        # Reduce input lag
+        Option "AllowFlipping" "Off"
+        Option "SwapInterval" "0"
+        # Power management
+        Option "RegistryDwords" "PerfLevelSrc=0x2222"
+        Option "Coolbits" "28"  # Enable overclocking and fan control if needed
       EndSection
     '';
 
