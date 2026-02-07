@@ -6,8 +6,8 @@
 font-family = JetBrainsMono Nerd Font
 font-size = 18
 
-# Theme
-theme = rose-pine
+# Theme - Using built-in theme instead of rose-pine
+theme = catppuccin-macchiato
 background-opacity = 0.70
 
 # Window
@@ -19,28 +19,29 @@ window-padding-balance = true
 window-padding-color = extend-always
 window-theme = dark
 
-# Performance
-backend = glsl
-resize-increases = false
-
 # Mouse
-click-to-copy = false
+copy-on-select = false
 
 # Selection & Clipboard
-copy-on-select = true
+# copy-on-select is already set above
 
 # Shell Integration
-shell-integration = fish  # Changed from zsh to fish
+shell-integration = fish
 
 # Scrollback
 scrollback-limit = 10000
 
 # Cursor
-cursor-style-unfocused = hollow
+cursor-style = bar
+cursor-style-blink = false
 
 # Keybindings
 confirm-close-surface = false
 
-# Environment (optional)
-# env = TERM=xterm-256color
-# env = LANG=en_US.UTF-8
+# Environment
+env = TERM=xterm-256color
+env = LANG=en_US.UTF-8
+
+# Performance optimizations
+gpu-acceleration = true
+gtk-single-instance = false

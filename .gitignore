@@ -1,2 +1,37 @@
-.config/tmux/plugins
-Cisco*
+# Nix build results
+result
+result-*
+*.d
+
+# NixOS generated files
+hosts/*/hardware-configuration.nix
+
+# Sensitive information
+*.key
+*.pem
+.secrets
+.env
+
+# Editor temp files
+*~
+.*.swp
+.*.swo
+.*.swp
+.*.un~
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Documentation backups
+*.md.bak
