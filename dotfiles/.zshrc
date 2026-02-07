@@ -63,14 +63,13 @@ alias .5='cd ../../../../..'
 alias l='eza -lh  --icons=auto'
 alias ls='eza -1   --icons=auto' # short list
 alias ll='eza -lha --icons=auto --sort=name --group-directories-first' # long list all
-alias ld='eza -lhD --icons=auto' # long list dirs
+alias ldir='eza -lhD --icons=auto' # long list dirs (renamed from ld to avoid conflict)
 alias mkdir='mkdir -p'
 # aliao ssh='kitten ssh'
 alias tree='tree -a -I .git'
 alias cat='bat'
 alias c='clear' # clear terminal
 alias e='exit'
-alias mkdir='mkdir -p'
 alias vim='nvim'
 alias v='nvim'
 alias grep='rg --color=auto'
@@ -82,6 +81,58 @@ alias gac='git add . && git commit -m'
 alias gs='git status'
 alias gpush='git push origin'
 alias lg='lazygit'
+
+# tmux Aliases
+alias t='tmux'
+alias ta='tmux attach -t'
+alias tl='tmux list-sessions'
+alias tn='tmux new-session -s'
+alias tk='tmux kill-session -t'
+alias tls='tmux ls'
+alias tkill='tmux kill-server'
+alias tsave='tmux save-buffer -'
+
+# Development Environment Layouts
+alias dev='~/rudra/scripts/tmux-dev-layout.sh'
+alias nixdev='~/rudra/scripts/tmux-dev-layout.sh nixos ~/rudra'
+alias dev-claude='~/rudra/scripts/tmux-dev-layout.sh claude'
+alias dev-claude-main='~/rudra/scripts/tmux-dev-layout.sh claude-main'
+alias dev-git='~/rudra/scripts/tmux-dev-layout.sh git'
+
+# Claude Code Repository Layout (Claude-First Philosophy)
+# パス指定なしでカレントディレクトリを使用
+alias repo='~/rudra/scripts/tmux-dev-layout.sh'
+
+# 使用例:
+# repo myproject claude-repo           # カレントディレクトリでレポジトリ作成
+# repo myproject                       # デフォルトclaude-repoレイアウト
+# repo myproject /path/to/project code # パス指定も可能
+
+# Repository/Session Management
+alias repos='tmux ls -F "#{session_name}"'           # レポジトリリスト表示
+alias dev-list='~/rudra/scripts/tmux-dev-layout.sh --list'  # 美しいレポジトリリスト
+alias dev-attach='tmux attach-session -t'             # レポジトリにアタッチ
+alias dev-kill='tmux kill-session -t'                 # レポジトリを削除
+
+# Interactive (fzfがある場合)
+if command -v fzf &> /dev/null; then
+    alias dev-interactive='tmux ls -F "#{session_name}" | fzf --preview "tmux lsw -t {} -F "#{window_name}: #{pane_current_command}" | head -5" | xargs -r tmux attach-session -t'
+fi
+
+# Claude Code aliases
+alias c='claude'
+alias cc='claude'
+alias c-continue='claude -c'                    # 前回の会話を継続
+alias c-muso='claude --dangerously-skip-permissions'  # 無双モード
+alias cm='claude --dangerously-skip-permissions'      # 無双モード（短縮）
+alias ccm='claude -c --dangerously-skip-permissions' # 継続+無双
+
+# 使用例:
+# c -c "この関数をリファクタリングして"         # 新規会話
+# c-continue "続きから"                        # 前回の会話を継続
+# c-muso "全ファイル書き換えて"                 # 無双モード
+# cm "許可なしで実行"                          # 無双モード（短縮）
+# ccm "続きで無双"                             # 継続+無双
 
 # Nixos Aliases
 alias rebuild='sudo nixos-rebuild switch --flake ~/rudra/.#default'
@@ -103,7 +154,8 @@ warp ()
 # Other Aliases
 alias apps-space='expac -H M "%011m\t%-20n\t%10d" $(comm -23 <(pacman -Qqe | sort) <(pacman -Qqg base base-devel | sort)) | sort -n'
 alias files-space='sudo ncdu --exclude /.snapshots /'
-alias ld='lazydocker'
+# ld conflicts with ldir - using lazydocker directly or create specific alias
+alias dock='lazydocker'
 alias docker-clean='docker container prune -f && docker image prune -f && docker network prune -f && docker volume prune -f'
 alias crdown='mpv --yt-dlp-raw-options=cookies-from-browser=brave'
 alias cr='cargo run'
@@ -133,7 +185,7 @@ eval "$(fnm env --use-on-cd)"
 # Export Paths
 
 # pnpm
-export PNPM_HOME="/home/vasu/.local/share/pnpm"
+export PNPM_HOME="/home/mirin/.local/share/pnpm"
 case ":$PATH:" in
     *":$PNPM_HOME:"*) ;;
     *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -152,7 +204,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # export NDK_HOME="$ANDROID_HOME/ndk/$(ls -1 $ANDROID_HOME/ndk)"
 
 # Turso
-export PATH="$PATH:/home/vasu/.turso"
+# export PATH="$PATH:/home/vasu/.turso"  # Uncommented - incorrect user path
 
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 

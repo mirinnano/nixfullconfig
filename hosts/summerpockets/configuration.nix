@@ -24,15 +24,23 @@ in
     inputs.dms.nixosModules.dank-material-shell
     inputs.dms.nixosModules.greeter
   ];
+
+  # ========================================
+  # NVIDIA ドライバー設定（スリープ問題修正）
+  # ========================================
+  drivers.nvidia.enable = true;
+  # powerManagement設定は modules/nvidia-drivers.nix で管理
+
   nixpkgs.config.permittedInsecurePackages = [
   "qtwebengine-5.15.19"
   "ventoy-1.1.10"
 ];
+ # DMS設定（起動失敗修正）
  programs.dank-material-shell = {
   enable = true;
   systemd = {
     enable = true;
-    target = "graphical-session.target";  # 自動起動
+    target = "default.target";  # graphical-session.targetの問題を回避
     restartIfChanged = true;
   };
   enableSystemMonitoring = true;
@@ -40,6 +48,18 @@ in
     enable = true;
     compositor.name = "hyprland";
   };
+ };
+
+ # DMSサービスの環境変数（read-only問題修正）
+ systemd.user.services.dms = {
+   environment = {
+     # matugenがユーザーディレクトリに書き込むように設定
+     HOME = "/home/${username}";
+     XDG_CONFIG_HOME = "/home/${username}/.config";
+     XDG_CACHE_HOME = "/home/${username}/.cache";
+     XDG_DATA_HOME = "/home/${username}/.local/share";
+     XDG_STATE_HOME = "/home/${username}/.local/state";
+   };
  };
   
   # Zram for better memory management
@@ -51,8 +71,19 @@ in
 
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
-    kernelModules = [ "v4l2loopback" ];
+    kernelModules = [ "v4l2loopback" "tap" "vhost_net" "vhost_vsock" ];
     extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
+
+    # NVIDIAモジュールを早期ロード（スリープ修正）
+    initrd.kernelModules = [
+      "nvidia"
+      "nvidia_modeset"
+      "nvidia_uvm"
+      "nvidia_drm"
+    ];
+
+    # Nouveauドライバーをブラックリスト（NVIDIAドライバー使用のため）
+    blacklistedKernelModules = [ "nouveau" ];
     kernel.sysctl = {
       # Memory Management
       "vm.max_map_count" = 2147483642;
@@ -78,6 +109,16 @@ in
       "fs.inotify.max_user_watches" = 524288;  # For large projects
       "fs.file-max" = 2097152;
 
+      # CPU Performance & Scheduling
+      "kernel.sched_min_granularity_ns" = 1000000;  # 1ms - better task scheduling
+      "kernel.sched_wakeup_granularity_ns" = 2000000;  # 2ms
+      "kernel.sched_tunable_scaling" = 1;  # Enable auto-tuning
+      "kernel.timer_migration" = 1;  # Timer migration for multi-CPU
+      "kernel.numa_balancing" = 0;  # Disable NUMA balancing for gaming (single GPU)
+
+      # Process Management
+      "kernel.pid_max" = 4194304;  # Max PID for heavy workloads
+
       # Kernel
       "kernel.sysrq" = 1;  # Enable SysRq for emergency
       "kernel.panic" = 10;  # Reboot after 10s on panic
@@ -92,13 +133,31 @@ in
       # Storage
       "nvme.noacpi=1" # Helps with NVME power consumption
 
-      # Performance
-      "mitigations=off"  # Disable CPU vulnerability mitigations for performance
+      # Security (balance between safety and performance)
+      "mitigations=nosmt"  # Disable SMT for security while keeping performance
       "quiet"  # Less verbose boot
       "loglevel=3"
 
       # Gaming optimization
       "split_lock_detect=off"  # Better game compatibility
+
+      # NVIDIA サスペンド/レジューム修正（重要！）
+      "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
+      "nvidia.NVreg_TemporaryFilePath=/var/tmp"
+      "nvidia-drm.modeset=1"
+
+      # NVIDIA パフォーマンス最大化
+      "nvidia.NVreg_EnablePageRetirement=1"  # Bad page retirement
+      "nvidia.NVreg_EnableGpuFirmware=0"  # Disable firmware check for faster boot
+      "nvidia.NVreg_ResmanDebugLevel=2099207"  # Debug (0x1FFFFFFF) - disable for production
+      "nvidia.NVreg_DynamicPowerManagement=0"  # Disable dynamic power management for max performance
+
+      # Waydroid (Android container)
+      "androidboot.hardware=generic"
+      "androidboot.selinux=permissive"
+
+      # Nouveauを無効化
+      "modprobe.blacklist=nouveau"
     ];
     loader = {
       efi = {
@@ -130,7 +189,15 @@ in
 
   networking = {
     hostName = hostName;
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      # Don't manage Waydroid interfaces
+      unmanaged = [
+        "rndis0"
+        "wlan0"
+        "utun*"
+      ];
+    };
     timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
     firewall = {
       allowedTCPPorts = [ 8003 ];
@@ -157,6 +224,15 @@ in
     GTK_IM_MODULE = "fcitx5";
     QT_IM_MODULE = "fcitx5";
     XMODIFIERS = lib.mkForce "@im=fcitx5";
+
+    # NVIDIA関連環境変数（Wayland対応）
+    LIBVA_DRIVER_NAME = "nvidia";
+    GBM_BACKEND = "nvidia-drm";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+
+    # XDG設定（DMS修正）
+    XDG_CONFIG_HOME = "$HOME/.config";
+    XDG_CACHE_HOME = "$HOME/.cache";
   };
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -236,12 +312,10 @@ in
     };
     libvirtd = {
       enable = true;
-    #  qemu = {
-     #   swtpm.enable = true;
-     #   ovmf.enable = true;
-     #   runAsRoot = true;
-    #  };
+      # socket activation instead of boot start for faster boot
+      # wantedBy = [ "multi-user.target" ];
     };
+    waydroid.enable = true;
     spiceUSBRedirection.enable = true;
   };
 
@@ -266,16 +340,22 @@ in
     };
   };
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    config.allowUnfree = true;
+    # Wine 32-bit support
+    system = "x86_64-linux";
+  };
 
   users = {
     mutableUsers = true;
     users.${username} = {
       isNormalUser = true;
       description = userDescription;
+      shell = pkgs.fish;  # Fish shell - modern and interactive
       extraGroups = [
         "networkmanager"
         "wheel"
+        "libvirtd"  # For virtualization (Waydroid, etc.)
       ];
       packages = with pkgs; [
         firefox
@@ -285,9 +365,7 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    # Text editors and IDEs
-    nano
-    vscode
+    # Text editors and IDEs (removed: nano, vscode - redundant with nvim/zed/idea)
     zed-editor
     jetbrains.idea
 
@@ -313,7 +391,7 @@ in
     fnm
     bun
     maven
-    mongodb-compass
+    # mongodb-compass  # Uncomment if MongoDB is used
     gcc
     openssl
     nodejs
@@ -331,11 +409,18 @@ in
     lazygit
     lazydocker
     bruno
-    postman
+    # postman  # Removed - bruno is sufficient
     bruno-cli
     gnumake
     coreutils
     nixfmt-rfc-style
+
+    # Wine for Windows applications
+    wine
+    wine64
+    winetricks
+    bottles  # Wine prefix manager
+    waydroid  # Android container for Apple Music
     meson
     ninja
 
@@ -349,6 +434,11 @@ in
     zoxide
     fzf
     tmux
+    tmuxPlugins.sensible
+    tmuxPlugins.vim-tmux-navigator
+    tmuxPlugins.resurrect
+    tmuxPlugins.continuum
+    tmuxPlugins.catppuccin
     progress
     tree
     alacritty
@@ -373,7 +463,7 @@ in
     lm_sensors
     inxi
     # nvtopPackages.nvidia
-    anydesk
+    # anydesk  # Removed - tailscale/ssh is sufficient
 
     # Network and internet tools
     aria2
@@ -539,6 +629,9 @@ in
   services.printing.browsing = false;  # プリンター自動検出を無効化
   services.avahi.publish.enable = lib.mkForce false;  # Avahi広告を無効化（検出は維持）
 
+  # Disable avahi completely if not using local network discovery
+  # services.avahi.enable = false;
+
   services = {
     xserver = {
       enable = false;
@@ -584,7 +677,7 @@ in
     libinput.enable = true;
     upower.enable = true;
     fstrim.enable = true;
-    gvfs.enable = true;
+    gvfs.enable = false;  # Disabled - using KDE Dolphin, redundant
     openssh.enable = true;
     flatpak.enable = true;
     power-profiles-daemon.enable = false;
@@ -593,12 +686,13 @@ in
       enable = true;
       settings = {
         battery = {
-          governor = "powersave";
-          turbo = "never";
+          governor = "schedutil";  # Better than powersave - modern CPU scaling
+          turbo = "auto";  # Allow turbo on battery for max performance
+          max_limit = 99;  # Leave one core free for thermal headroom
         };
         charger = {
           governor = "performance";
-          turbo = "auto";
+          turbo = "auto";  # Always use turbo when charging
         };
       };
     };
@@ -612,11 +706,17 @@ in
 
     gnome.gnome-keyring.enable = true;
     avahi = {
-      enable = true;
-      nssmdns4 = true;
-      openFirewall = true;
+      enable = false;  # Disabled for faster boot - enable if using local network discovery
+      # nssmdns4 = true;
+      # openFirewall = true;
     };
-    ipp-usb.enable = true;
+    ipp-usb.enable = false;  # Disabled - uncomment if using printer over USB
+
+    # Hypridle - Idle manager for automatic lock and suspend
+    hypridle = {
+      enable = true;
+    };
+
     syncthing = {
       enable = true;
       user = username;
@@ -663,43 +763,53 @@ in
   # powerManagement.powertop.enable = true;
 
   # Boot optimization
-  systemd.services.NetworkManager-wait-online.enable = false;  # 3秒削減！
+
+  # OneDrive - Manual start only for better boot performance
+  # To enable: systemctl --user start onedrive
+  # To auto-enable: systemctl --user enable onedrive
+  # systemd.user.services = {
+  #   onedrive = {
+  #     description = "Onedrive Sync Service";
+  #     after = [ "network-online.target" ];
+  #     serviceConfig = {
+  #       Type = "simple";
+  #       User = username;
+  #       ExecStart = "${pkgs.onedrive}/bin/onedrive --monitor";
+  #       Restart = "always";
+  #       RestartSec = 10;
+  #     };
+  #   };
+  # };
 
   systemd.services = {
-    onedrive = {
-      description = "Onedrive Sync Service";
-      after = [ "network-online.target" ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        Type = "simple";
-        User = username;
-        ExecStart = "${pkgs.onedrive}/bin/onedrive --monitor";
-        Restart = "always";
-        RestartSec = 10;
-      };
-    };
     flatpak-repo = {
       path = [ pkgs.flatpak ];
       script = "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo";
     };
     libvirtd = {
       enable = true;
-      wantedBy = [ "multi-user.target" ];
+      # Socket activation - starts on demand instead of boot
+      # wantedBy = [ "multi-user.target" ];  # Removed for faster boot
       requires = [ "virtlogd.service" ];
     };
     # Docker遅延起動（ネットワーク待機不要）
     docker.wantedBy = lib.mkForce [];
+
+    # NVIDIAサスペンド/レジュームサービス（スリープ修正）
+    nvidia-suspend.enable = true;
+    nvidia-resume.enable = true;
+    nvidia-hibernate.enable = true;
   };
 
   hardware = {
     sane = {
-      enable = true;
-      extraBackends = [ pkgs.sane-airscan ];
-      disabledDefaultBackends = [ "escl" ];
+      enable = false;  # Disabled - uncomment if using scanner
+      # extraBackends = [ pkgs.sane-airscan ];
+      # disabledDefaultBackends = [ "escl" ];
     };
     logitech.wireless = {
-      enable = true;
-      enableGraphical = true;
+      enable = false;  # Disabled - uncomment if using Logitech wireless devices
+      # enableGraphical = true;
     };
     bluetooth = {
       enable = true;

@@ -149,7 +149,6 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'clangd',
-        'lua_ls',
         'rust_analyzer',
         -- 'biome',
         'gopls',
@@ -161,7 +160,6 @@ return {
         'cssls',
         'tailwindcss',
         'svelte',
-        'lua_ls',
         'graphql',
         'emmet_ls',
         'prismals',

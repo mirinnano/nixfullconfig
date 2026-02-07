@@ -1,9 +1,16 @@
+# ==========================================
+# Ghostty Configuration
+# ==========================================
+
+# Font
 font-family = JetBrainsMono Nerd Font
 font-size = 18
 
+# Theme
 theme = rose-pine
 background-opacity = 0.70
 
+# Window
 window-decoration = false
 window-vsync = true
 window-padding-x = 4
@@ -12,5 +19,28 @@ window-padding-balance = true
 window-padding-color = extend-always
 window-theme = dark
 
+# Performance
+backend = glsl
+resize-increases = false
+
+# Mouse
+click-to-copy = false
+
+# Selection & Clipboard
 copy-on-select = true
-shell-integration = zsh
+
+# Shell Integration
+shell-integration = fish  # Changed from zsh to fish
+
+# Scrollback
+scrollback-limit = 10000
+
+# Cursor
+cursor-style-unfocused = hollow
+
+# Keybindings
+confirm-close-surface = false
+
+# Environment (optional)
+# env = TERM=xterm-256color
+# env = LANG=en_US.UTF-8

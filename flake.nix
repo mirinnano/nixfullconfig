@@ -67,6 +67,9 @@
                 customSddmThemeOverlay
                 hyprpanel.overlay
               ];
+
+              # Enable 32-bit emulation for Wine
+              nixpkgs.config.allowUnsupportedSystem = true;
             }
           )
           ./hosts/summerpockets/configuration.nix

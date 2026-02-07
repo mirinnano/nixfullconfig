@@ -22,8 +22,9 @@ in {
       ".config/wlogout/icons".source = ../../config/wlogout;
 
       # Top Level Files symlinks
-      ".zshrc".source = ../../dotfiles/.zshrc;
+      # ".zshrc".source = ../../dotfiles/.zshrc;  # Removed: Switched to fish
       ".gitconfig".source = ../../dotfiles/.gitconfig;
+      ".tmux.conf".source = ../../dotfiles/.tmux.conf;
       ".ideavimrc".source = ../../dotfiles/.ideavimrc;
       ".nirc".source = ../../dotfiles/.nirc;
       ".local/bin/wallpaper".source = ../../dotfiles/.local/bin/wallpaper;
@@ -32,6 +33,7 @@ in {
       # Config directories
       ".config/alacritty".source = ../../dotfiles/.config/alacritty;
       # ".config/dunst".source = ../../dotfiles/.config/dunst;  # Removed: DMS provides notification system
+      ".config/fish".source = ../../dotfiles/.config/fish;
       ".config/fastfetch".source = ../../dotfiles/.config/fastfetch;
       ".config/fcitx5".source = ../../dotfiles/.config/fcitx5;
       ".config/MangoHud/MangoHud.conf".source = ../../dotfiles/.config/MangoHud/MangoHud.conf;
@@ -39,6 +41,7 @@ in {
       ".config/kitty".source = ../../dotfiles/.config/kitty;
       ".config/mpv".source = ../../dotfiles/.config/mpv;
       ".config/tmux/tmux.conf".source = ../../dotfiles/.config/tmux/tmux.conf;
+      ".config/hypr/hypridle.conf".source = ../../dotfiles/.config/hypr/hypridle.conf;
       # ".config/waybar".source = ../../dotfiles/.config/waybar;  # Removed: DMS panel working
       ".config/yazi".source = ../../dotfiles/.config/yazi;
       ".config/wezterm".source = ../../dotfiles/.config/wezterm;
@@ -54,7 +57,7 @@ in {
       # Default applications
       EDITOR = "nvim";
       VISUAL = "nvim";
-      TERMINAL = "alacritty";
+      TERMINAL = "ghostty";  # Main terminal - replaced alacritty
       BROWSER = "zen";
 
       # XDG Base Directories

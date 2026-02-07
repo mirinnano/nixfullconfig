@@ -34,25 +34,34 @@ get_governor() {
     cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || echo "unknown"
 }
 
-# Set power profile via auto-cpufreq
+# Set CPU governor directly via sysfs (instant, no service restart)
+set_cpu_governor() {
+    local gov="$1"
+    for cpu in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+        echo "$gov" > "$cpu" 2>/dev/null
+    done
+    log "Set CPU governor to: $gov"
+}
+
+# Set power profile via auto-cpufreq (fallback)
 set_profile() {
     local profile=$1
     log "Switching to $profile profile"
 
     case $profile in
         performance)
-            # Force performance mode
-            systemctl restart auto-cpufreq.service
+            # Direct governor setting (instant)
+            set_cpu_governor "performance"
             dunstify "Power Profile" "Performance mode activated" -t 2000 -i battery-full
             ;;
         powersave)
-            # Force powersave mode
-            systemctl restart auto-cpufreq.service
+            # Direct governor setting (instant)
+            set_cpu_governor "powersave"
             dunstify "Power Profile" "Powersave mode activated" -t 2000 -i battery-low
             ;;
         balanced)
-            # Let auto-cpufreq decide
-            systemctl restart auto-cpufreq.service
+            # Let auto-cpufreq handle it
+            set_cpu_governor "schedutil"
             dunstify "Power Profile" "Balanced mode activated" -t 2000 -i battery-good
             ;;
     esac

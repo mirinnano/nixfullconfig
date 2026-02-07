@@ -1,7 +1,52 @@
-[init]
-	defaultBranch = main
+[core]
+  editor = nvim
+  pager = delta
+  ignorecase = false
+
 [user]
-	email = vasujain275@gmail.com
-	name = vasujain275
+  name = "mirinnano"
+  email = "yozume_jp@yahoo.co.jp"
+
+[merge]
+  conflictstyle = zdiff3
+  tool = nvimdiff
+
+[mergetool "nvimdiff"]
+  cmd = "nvim -d $LOCAL $REMOTE $MERGED $BASE"
+
+[alias]
+  lg = log --graph --oneline --all
+  co = checkout
+  st = status
+  ci = commit
+  br = branch
+  unstage = reset HEAD --
+  last = log -1 HEAD
+
 [pull]
-	rebase = true
+  rebase = true
+
+[init]
+  defaultBranch = main
+
+[diff]
+  colorMoved = default
+
+[delta]
+  navigate = true
+  light = false
+
+[delta "decorations"]
+  commit-decoration-style = blue ol
+  commit-style = raw
+  file-decoration-style = none
+  file-style = raw
+  hunk-header-decoration-style = blue bold
+  hunk-header-style = omit line-number syntax
+  line-numbers = true
+
+[delta "line-numbers"]
+  line-numbers-left-style = cyan
+  line-numbers-right-style = cyan
+  line-numbers-minus-style = 124
+  line-numbers-plus-style = 28
