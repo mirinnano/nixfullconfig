@@ -30,7 +30,11 @@ in
 ];
  programs.dank-material-shell = {
   enable = true;
-  systemd.enable = true;
+  systemd = {
+    enable = true;
+    target = "graphical-session.target";  # 自動起動
+    restartIfChanged = true;
+  };
   enableSystemMonitoring = true;
   greeter = {
     enable = true;
@@ -38,19 +42,63 @@ in
   };
  };
   
+  # Zram for better memory management
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 50;  # Use 50% of RAM for zram
+  };
+
   boot = {
     kernelPackages = pkgs.linuxPackages_zen;
     kernelModules = [ "v4l2loopback" ];
     extraModulePackages = [ config.boot.kernelPackages.v4l2loopback ];
     kernel.sysctl = {
+      # Memory Management
       "vm.max_map_count" = 2147483642;
+      "vm.swappiness" = 180;  # Aggressive swap to zram
+      "vm.watermark_boost_factor" = 0;
+      "vm.watermark_scale_factor" = 125;
+      "vm.page-cluster" = 0;  # Disable swap readahead
+      "vm.vfs_cache_pressure" = 50;  # Keep cache longer
+      "vm.dirty_ratio" = 10;  # Start writing at 10% dirty
+      "vm.dirty_background_ratio" = 5;  # Background writing at 5%
+
+      # Network Performance (TCP BBR)
+      "net.core.default_qdisc" = "cake";  # Better than fq_codel
+      "net.ipv4.tcp_congestion_control" = "bbr";
+      "net.ipv4.tcp_fastopen" = 3;
+      "net.core.rmem_max" = 16777216;  # 16MB receive buffer
+      "net.core.wmem_max" = 16777216;  # 16MB send buffer
+      "net.ipv4.tcp_rmem" = "4096 87380 16777216";
+      "net.ipv4.tcp_wmem" = "4096 65536 16777216";
+      "net.ipv4.tcp_mtu_probing" = 1;
+
+      # File System
+      "fs.inotify.max_user_watches" = 524288;  # For large projects
+      "fs.file-max" = 2097152;
+
+      # Kernel
+      "kernel.sysrq" = 1;  # Enable SysRq for emergency
+      "kernel.panic" = 10;  # Reboot after 10s on panic
     };
     kernelParams = [
+      # Intel Graphics
       "intel_pstate=active"
       "i915.enable_psr=1" # Panel self refresh
       "i915.enable_fbc=1" # Framebuffer compression
       "i915.enable_dc=2" # Display power saving
+
+      # Storage
       "nvme.noacpi=1" # Helps with NVME power consumption
+
+      # Performance
+      "mitigations=off"  # Disable CPU vulnerability mitigations for performance
+      "quiet"  # Less verbose boot
+      "loglevel=3"
+
+      # Gaming optimization
+      "split_lock_detect=off"  # Better game compatibility
     ];
     loader = {
       efi = {
@@ -99,7 +147,6 @@ in
      addons = with pkgs; [
        fcitx5-mozc
        fcitx5-gtk
-       fcitx5-with-addons
        fcitx5-skk
        qt6Packages.fcitx5-configtool
      ];
@@ -107,9 +154,9 @@ in
    };
 };
   environment.variables = {
-   # GTK_IM_MODULE = "fcitx5";
-   # QT_IM_MODULE = "fcitx5";
-   # XMODIFIERS = "@im=fcitx5";
+    GTK_IM_MODULE = "fcitx5";
+    QT_IM_MODULE = "fcitx5";
+    XMODIFIERS = lib.mkForce "@im=fcitx5";
   };
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -352,6 +399,7 @@ in
 
     # Productivity and office
     obsidian
+    bitwarden-desktop  # Password manager
     libreoffice-qt6-fresh
     spacedrive
     hugo
@@ -378,6 +426,7 @@ in
     # System utilities
     libgcc
     bc
+    jq  # JSON processor (needed for screenshot script)
     kdePackages.dolphin
     lxqt.lxqt-policykit
     libnotify
@@ -485,6 +534,10 @@ in
     ];
   };
 
+  # Disable unnecessary services
+  services.printing.browsing = false;  # プリンター自動検出を無効化
+  services.avahi.publish.enable = lib.mkForce false;  # Avahi広告を無効化（検出は維持）
+
   services = {
     xserver = {
       enable = false;
@@ -570,11 +623,38 @@ in
       pulse.enable = true;
       jack.enable = true;
       wireplumber.enable = true;
+
+      # Audio quality settings: 2ch 32bit 48kHz
+      extraConfig.pipewire."92-high-quality-audio" = {
+        "context.properties" = {
+          "default.clock.rate" = 48000;
+          "default.clock.allowed-rates" = [ 48000 ];
+        };
+        "stream.properties" = {
+          "resample.quality" = 10;
+          "channelmix.normalize" = false;
+          "channelmix.mix-lfe" = false;
+        };
+      };
+
+      extraConfig.pipewire-pulse."92-high-quality-audio" = {
+        "pulse.properties" = {
+          "pulse.default.format" = "S32LE";
+          "pulse.default.rate" = 48000;
+          "pulse.default.channels" = 2;
+        };
+        "stream.properties" = {
+          "resample.quality" = 10;
+        };
+      };
     };
     pulseaudio.enable = false;
   };
 
   # powerManagement.powertop.enable = true;
+
+  # Boot optimization
+  systemd.services.NetworkManager-wait-online.enable = false;  # 3秒削減！
 
   systemd.services = {
     onedrive = {
@@ -598,6 +678,8 @@ in
       wantedBy = [ "multi-user.target" ];
       requires = [ "virtlogd.service" ];
     };
+    # Docker遅延起動（ネットワーク待機不要）
+    docker.wantedBy = lib.mkForce [];
   };
 
   hardware = {

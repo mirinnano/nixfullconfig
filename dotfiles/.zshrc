@@ -155,3 +155,135 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PATH:/home/vasu/.turso"
 
 source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# ===============================
+# Advanced Development Aliases
+# ===============================
+
+# Git advanced
+alias gaa='git add --all'
+alias gcm='git commit -m'
+alias gcam='git commit -am'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gpl='git pull'
+alias gps='git push'
+alias gst='git status -sb'
+alias glog='git log --oneline --decorate --graph --all'
+alias gdiff='git diff --color-words'
+alias gundo='git reset --soft HEAD~1'
+
+# Docker shortcuts
+alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dimg='docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"'
+alias dstop='docker stop $(docker ps -q)'
+alias drm='docker rm $(docker ps -aq)'
+alias drmi='docker rmi $(docker images -q)'
+alias dlog='docker logs -f'
+
+# NixOS shortcuts
+alias nrs='sudo nixos-rebuild switch --flake ~/rudra#summerpockets'
+alias nrb='sudo nixos-rebuild boot --flake ~/rudra#summerpockets'
+alias nrt='sudo nixos-rebuild test --flake ~/rudra#summerpockets'
+alias nfu='nix flake update'
+alias ngc='sudo nix-collect-garbage -d'
+alias hms='home-manager switch --flake ~/rudra#mirin'
+
+# System monitoring
+alias meminfo='free -h'
+alias cpuinfo='lscpu'
+alias diskinfo='df -h'
+alias ports='ss -tulpn'
+alias psgrep='ps aux | grep -v grep | grep -i -e VSZ -e'
+
+# Quick edits
+alias zshrc='nvim ~/.zshrc && source ~/.zshrc'
+alias hyprconf='nvim ~/.config/hypr/hyprland.conf'
+alias hyprkeys='nvim ~/.config/hypr/keybindings.conf'
+alias nixconf='cd ~/rudra && nvim hosts/summerpockets/configuration.nix'
+
+# ===============================
+# Useful Functions
+# ===============================
+
+# Extract any archive
+extract() {
+    if [ -f "$1" ] ; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)           echo "'$1' cannot be extracted" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Create directory and cd into it
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Find and kill process by name
+killp() {
+    ps aux | grep "$1" | grep -v grep | awk '{print $2}' | xargs kill -9
+}
+
+# Git commit with Co-Authored-By
+gcco() {
+    git commit -m "$1
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+}
+
+# Quick Python HTTP server
+serve() {
+    python3 -m http.server "${1:-8000}"
+}
+
+# Show largest files/dirs
+largest() {
+    du -ah "${1:-.}" | sort -rh | head -n "${2:-20}"
+}
+
+# Port check
+portcheck() {
+    sudo ss -tulpn | grep ":$1"
+}
+
+# Git branch cleanup
+gbclean() {
+    git branch --merged | grep -v "\*" | grep -v "main" | grep -v "master" | xargs -n 1 git branch -d
+}
+
+# System update shortcut
+update() {
+    echo "Updating NixOS..."
+    nix flake update ~/rudra
+    sudo nixos-rebuild switch --flake ~/rudra#summerpockets
+}
+
+# Quick backup
+backup() {
+    tar -czf "${1%/}_$(date +%Y%m%d_%H%M%S).tar.gz" "$1"
+}
+
+# Man pages with colors
+man() {
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[01;44;33m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    command man "$@"
+}

@@ -13,6 +13,17 @@ in {
 
   config = mkIf cfg.enable {
     services.xserver.videoDrivers = ["nvidia"];
+
+    # Fix MESA-LOADER warnings - Add GBM backend support
+    hardware.graphics = {
+      extraPackages = with pkgs; [
+        nvidia-vaapi-driver
+      ];
+      extraPackages32 = with pkgs.pkgsi686Linux; [
+        nvidia-vaapi-driver
+      ];
+    };
+
     hardware.nvidia = {
       # Modesetting is required.
       modesetting.enable = true;
@@ -35,5 +46,10 @@ in {
       # Optionally, you may need to select the appropriate driver version for your specific GPU.
       package = config.boot.kernelPackages.nvidiaPackages.stable;
     };
+
+    # Add nvidia-smi and other tools to system packages
+    environment.systemPackages = with pkgs; [
+      nvtopPackages.nvidia
+    ];
   };
 }

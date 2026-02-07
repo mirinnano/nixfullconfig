@@ -16,6 +16,7 @@ in {
     file = {
       # Hyprland Config
       ".config/hypr".source = ../../dotfiles/.config/hypr;
+      ".config/hypr/scripts/screenshot.sh".source = ../../dotfiles/.config/hypr/scripts/screenshot.sh;
 
       # wlogout icons
       ".config/wlogout/icons".source = ../../config/wlogout;
@@ -26,12 +27,15 @@ in {
       ".ideavimrc".source = ../../dotfiles/.ideavimrc;
       ".nirc".source = ../../dotfiles/.nirc;
       ".local/bin/wallpaper".source = ../../dotfiles/.local/bin/wallpaper;
+      ".local/share/fcitx5/themes".source = ../../dotfiles/.local/share/fcitx5/themes;
 
       # Config directories
       ".config/alacritty".source = ../../dotfiles/.config/alacritty;
       # ".config/dunst".source = ../../dotfiles/.config/dunst;  # Removed: DMS provides notification system
       ".config/fastfetch".source = ../../dotfiles/.config/fastfetch;
       ".config/fcitx5".source = ../../dotfiles/.config/fcitx5;
+      ".config/MangoHud/MangoHud.conf".source = ../../dotfiles/.config/MangoHud/MangoHud.conf;
+      ".config/gamemode.ini".source = ../../dotfiles/.config/gamemode.ini;
       ".config/kitty".source = ../../dotfiles/.config/kitty;
       ".config/mpv".source = ../../dotfiles/.config/mpv;
       ".config/tmux/tmux.conf".source = ../../dotfiles/.config/tmux/tmux.conf;
@@ -75,6 +79,12 @@ in {
 
       # Localization
       LC_ALL = "en_US.UTF-8";
+
+      # Input Method (fcitx5)
+      XDG_IM_MODULE = "fcitx5";
+      GTK_IM_MODULE = "fcitx5";
+      QT_IM_MODULE = "fcitx5";
+      XMODIFIERS = "@im=fcitx5";
     };
 
     sessionPath = [
