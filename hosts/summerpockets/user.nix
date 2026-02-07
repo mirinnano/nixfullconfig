@@ -13,9 +13,13 @@ in {
     users.users.${userName} = {
       isNormalUser = true;
       description = userDescription;
-      shell = pkgs.zsh;
-      extraGroups = ["wheel" "docker" "wireshark" "libvirtd" "kvm"];
+      shell = pkgs.fish;
+      extraGroups = ["wheel" "docker" "wireshark" "libvirtd" "kvm" "networkmanager"];
+      packages = with pkgs; [
+        firefox
+        thunderbird
+      ];
     };
-    programs.zsh.enable = true;
+    programs.fish.enable = true;
   };
 }

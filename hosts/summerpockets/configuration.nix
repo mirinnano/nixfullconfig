@@ -348,20 +348,8 @@ in
 
   users = {
     mutableUsers = true;
-    users.${username} = {
-      isNormalUser = true;
-      description = userDescription;
-      shell = pkgs.fish;  # Fish shell - modern and interactive
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-        "libvirtd"  # For virtualization (Waydroid, etc.)
-      ];
-      packages = with pkgs; [
-        firefox
-        thunderbird
-      ];
-    };
+    # User configuration is now in user.nix module to avoid duplication
+  };
   };
 
   environment.systemPackages = with pkgs; [
