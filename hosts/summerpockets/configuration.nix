@@ -350,7 +350,6 @@ in
     mutableUsers = true;
     # User configuration is now in user.nix module to avoid duplication
   };
-  };
 
   environment.systemPackages = with pkgs; [
     # Text editors and IDEs (removed: nano, vscode - redundant with nvim/zed/idea)
