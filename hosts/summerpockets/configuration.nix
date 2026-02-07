@@ -354,15 +354,20 @@ in
     fish = {
       enable = true;
       interactiveShellInit = ''
+        # Disable universal variables completely to avoid /nix/store write errors
+        # Universal variables cannot be used in NixOS-managed Fish config
+        set -g fish_user_paths
+
         # Set XDG directories for writable Fish data
         set -gx XDG_DATA_HOME "$HOME/.local/share"
         set -gx XDG_CONFIG_HOME "$HOME/.config"
+        set -gx XDG_CACHE_HOME "$HOME/.cache"
 
         # Ensure Fish data directory exists
         mkdir -p "$XDG_DATA_HOME/fish"
 
-        # Set PATH variables (global, not universal)
-        set -gx fish_user_paths $HOME/.local/bin $HOME/.cargo/bin $HOME/rudra/scripts
+        # Set PATH via regular environment variables (not universal)
+        set -gx PATH $HOME/.local/bin $HOME/.cargo/bin $HOME/rudra/scripts $PATH
 
         # Disable greeting
         set -gx fish_greeting
@@ -648,6 +653,12 @@ in
 
   # Disable avahi completely if not using local network discovery
   # services.avahi.enable = false;
+
+  # Create writable directories for Fish variables
+  systemd.tmpfiles.rules = [
+    "d /home/mirin/.local/share/fish 0755 mirin users -"
+    "d /home/mirin/.config/fish 0755 mirin users -"
+  ];
 
   services = {
     xserver = {
