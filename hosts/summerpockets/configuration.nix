@@ -453,6 +453,7 @@ in
     hypridle
     grim
     slurp
+    wofi  # Application launcher
     waybar
     hyprpanel
     dunst
@@ -601,6 +602,14 @@ in
         };
       };
     };
+
+    # Ananicy - Automatic process nice/ioclass management
+    ananicy = {
+      enable = true;
+      package = pkgs.ananicy-cpp;  # C++ version (faster)
+      rulesProvider = pkgs.ananicy-rules-cachyos;  # CachyOS ruleset (gaming optimized)
+    };
+
     gnome.gnome-keyring.enable = true;
     avahi = {
       enable = true;
@@ -794,6 +803,38 @@ in
     "x-scheme-handler/unknown" = "zen.desktop";
     "x-scheme-handler/postman" = "Postman.desktop";
     "x-scheme-handler/tonsite" = "org.telegram.desktop.desktop";
+  };
+
+  # Power profile management
+  systemd.user.services.power-profile-manager = {
+    description = "Automatic power profile management";
+    wantedBy = [ "default.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.bash}/bin/bash ${homeDirectory}/rudra/scripts/power-profile-manager.sh --daemon";
+      Restart = "on-failure";
+      RestartSec = "10s";
+    };
+  };
+
+  # Automatic backup to GitHub
+  systemd.user.services.auto-backup = {
+    description = "Automatic NixOS configuration backup to GitHub";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash ${homeDirectory}/rudra/scripts/auto-backup.sh";
+    };
+  };
+
+  systemd.user.timers.auto-backup = {
+    description = "Daily backup timer";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+      RandomizedDelaySec = "1h";
+    };
   };
 
   home-manager = {
