@@ -33,7 +33,7 @@ in {
       # Config directories
       ".config/alacritty".source = ../../dotfiles/.config/alacritty;
       # ".config/dunst".source = ../../dotfiles/.config/dunst;  # Removed: DMS provides notification system
-      ".config/fish".source = ../../dotfiles/.config/fish;
+      # ".config/fish".source = ../../dotfiles/.config/fish;  # Removed: Fish managed by NixOS to avoid /nix/store write errors
       ".config/fastfetch".source = ../../dotfiles/.config/fastfetch;
       ".config/fcitx5".source = ../../dotfiles/.config/fcitx5;
       ".config/MangoHud/MangoHud.conf".source = ../../dotfiles/.config/MangoHud/MangoHud.conf;

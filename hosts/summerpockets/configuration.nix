@@ -355,7 +355,6 @@ in
       enable = true;
       interactiveShellInit = ''
         # Disable universal variables completely to avoid /nix/store write errors
-        # Universal variables cannot be used in NixOS-managed Fish config
         set -g fish_user_paths
 
         # Set XDG directories for writable Fish data
@@ -363,14 +362,93 @@ in
         set -gx XDG_CONFIG_HOME "$HOME/.config"
         set -gx XDG_CACHE_HOME "$HOME/.cache"
 
-        # Ensure Fish data directory exists
+        # Ensure Fish data directories exist (writable locations)
         mkdir -p "$XDG_DATA_HOME/fish"
+        mkdir -p "$XDG_CONFIG_HOME/fish/functions"
+        mkdir -p "$XDG_CONFIG_HOME/fish/completions"
+        mkdir -p "$XDG_CONFIG_HOME/fish/conf.d"
 
-        # Set PATH via regular environment variables (not universal)
+        # Set PATH via regular environment variables
         set -gx PATH $HOME/.local/bin $HOME/.cargo/bin $HOME/rudra/scripts $PATH
+
+        # PNPM
+        set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 
         # Disable greeting
         set -gx fish_greeting
+
+        # History settings
+        set -g fish_history_max_file 100000
+        set -g fish_history_max_size 100000
+
+        # Syntax highlighting
+        set -g fish_color_autosuggestion brblack
+        set -g fish_color_command brgreen
+        set -g fish_color_error red
+        set -g fish_color_param cyan
+        set -g fish_autosuggestion_enabled 1
+
+        # === Essential Abbreviations ===
+
+        # Directory navigation
+        abbr .. 'cd ..'
+        abbr ... 'cd ../..'
+        abbr .3 'cd ../../..'
+
+        # File operations
+        abbr l 'eza -lh --icons=auto'
+        abbr ll 'eza -lha --icons=auto --group-directories-first'
+        abbr cat 'bat'
+        abbr c 'clear'
+        abbr e 'exit'
+        abbr v 'nvim'
+
+        # Git
+        abbr gs 'git status'
+        abbr ga 'git add'
+        abbr gc 'git commit -m'
+        abbr gpush 'git push'
+        abbr gpull 'git pull'
+        abbr lg 'lazygit'
+
+        # tmux
+        abbr t 'tmux'
+        abbr ta 'tmux attach -t'
+        abbr tls 'tmux ls'
+        abbr tn 'tmux new-session -s'
+
+        # Development
+        abbr dev '~/rudra/scripts/tmux-dev-layout.sh'
+        abbr rebuild 'sudo nixos-rebuild switch --flake ~/rudra#summerpockets'
+
+        # Claude Code
+        abbr cc 'claude'
+        abbr c-continue 'claude -c'
+        abbr cm 'claude --dangerously-skip-permissions'
+
+        # System
+        abbr ssn 'sudo shutdown now'
+        abbr srn 'sudo reboot now'
+
+        # VPN
+        abbr mullvad-connect 'mullvad connect'
+        abbr mullvad-disconnect 'mullvad disconnect'
+        abbr mullvad-status 'mullvad status'
+        abbr mullvad-relist 'mullvad relay list'
+        abbr mullvad-set 'mullvad relay set'
+
+        # === Key Bindings ===
+        fish_vi_key_bindings
+
+        # === Prompt ===
+        if type -q starship
+          starship init fish | source
+        end
+
+        # === Functions ===
+        function mkcd
+          mkdir -p $argv[1] && cd $argv[1]
+        end
       '';
     };
   };
