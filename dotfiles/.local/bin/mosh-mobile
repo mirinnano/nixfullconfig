@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+HOST="${1:-mirin@100.71.222.94}"
+echo "📱 Mosh: $HOST"
+mosh "$HOST" -- zellij attach -c mobile 2>/dev/null || zellij -s mobile -l mobile
