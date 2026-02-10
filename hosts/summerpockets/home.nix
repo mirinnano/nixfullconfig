@@ -40,7 +40,7 @@ in {
       # ".config/dunst".source = ../../dotfiles/.config/dunst;  # Removed: DMS provides notification system
       # ".config/fish".source = ../../dotfiles/.config/fish;  # Removed: Fish managed by NixOS to avoid /nix/store write errors
       ".config/fastfetch".source = ../../dotfiles/.config/fastfetch;
-      ".config/zellij".source = ../../dotfiles/.config/zellij;
+      # ".config/zellij".source = ../../dotfiles/.config/zellij;  # Removed: using default config
       ".config/fcitx5".source = ../../dotfiles/.config/fcitx5;
       ".config/MangoHud/MangoHud.conf".source = ../../dotfiles/.config/MangoHud/MangoHud.conf;
       ".config/gamemode.ini".source = ../../dotfiles/.config/gamemode.ini;
