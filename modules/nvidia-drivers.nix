@@ -55,8 +55,9 @@ in {
       Section "Device"
         Identifier "NVIDIA GPU"
         Driver "nvidia"
+        # High refresh rate settings
+        Option "MetaModes" "DP-2: 1920x1080_144 +1920+0 {ForceFullCompositionPipeline=On}, HDMI-A-1: 1920x1080_75 +0+0 {ForceFullCompositionPipeline=On}"
         # Performance optimizations for gaming
-        Option "MetaModes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
         Option "AllowIndirectGLXProtocol" "off"
         Option "TripleBuffer" "on"
         Option "BaseProfile" "high_performance"
