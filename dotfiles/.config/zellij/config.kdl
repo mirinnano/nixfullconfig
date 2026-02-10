@@ -1,33 +1,15 @@
 // Zellij configuration for mobile SSH access
-//
-// Keybindings optimized for mobile terminals:
-// - Ctrl+P: Session management
-// - Ctrl+T: New tab
-// - Ctrl+W: Close tab
+// Simplified for compatibility
 
 keybinds clear-defaults=true {
     normal {
-        ctrl+p { SwitchToMode "Session" }
-        ctrl+t { NewTab }
-        ctrl+w { CloseTab }
-        ctrl+tab { GoToPreviousTab }
-        ctrl+1 { GoToTab 1 }
-        ctrl+2 { GoToTab 2 }
-        ctrl+3 { GoToTab 3 }
-        ctrl+s { SwitchToMode "Scroll" }
+        ctrl+p { SwitchToMode "Session"; }
+        ctrl+t { NewTab; }
+        ctrl+w { CloseTab; }
+        ctrl+d { Detach; }
     }
-
     session {
-        ctrl+p { SwitchToMode "Normal" }
-        ctrl+d { Detach }
+        ctrl+p { SwitchToMode "Normal"; }
+        ctrl+d { Detach; }
     }
-
-    scroll {
-        ctrl+s { SwitchToMode "Normal" }
-    }
-}
-
-session_serialization {
-    serialize_pane_views=true
-    serialize_tabs=true
 }
