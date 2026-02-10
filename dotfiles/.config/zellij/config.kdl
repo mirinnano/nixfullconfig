@@ -1,10 +1,11 @@
-// Zellij configuration - Minimal for mobile SSH
+// Zellij configuration for mobile SSH
+// Based on https://zellij.dev/documentation/keybindings.html
 
 keybinds clear-defaults=true {
-    shared_except "normal" "locked" {
-        ctrl+p { SwitchToMode "Session"; }
+    shared_except "locked" {
+        bind "Ctrl p" { SwitchToMode "Session"; }
     }
     session {
-        ctrl+d { Detach; }
+        bind "Ctrl d" { Detach; }
     }
 }
