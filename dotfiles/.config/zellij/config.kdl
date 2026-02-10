@@ -1,15 +1,10 @@
-// Zellij configuration for mobile SSH access
-// Simplified for compatibility
+// Zellij configuration - Simplified for mobile SSH
 
 keybinds clear-defaults=true {
-    normal {
+    shared_except "lock" {
         ctrl+p { SwitchToMode "Session"; }
-        ctrl+t { NewTab; }
-        ctrl+w { CloseTab; }
-        ctrl+d { Detach; }
     }
     session {
-        ctrl+p { SwitchToMode "Normal"; }
         ctrl+d { Detach; }
     }
 }

@@ -1,4 +1,5 @@
 {
+  lib,
   config,
   pkgs,
   inputs,
@@ -16,7 +17,6 @@ in {
     file = {
       # Hyprland Config
       ".config/hypr".source = ../../dotfiles/.config/hypr;
-      ".config/hypr/scripts/screenshot.sh".source = ../../dotfiles/.config/hypr/scripts/screenshot.sh;
 
       # wlogout icons
       ".config/wlogout/icons".source = ../../config/wlogout;
@@ -28,6 +28,11 @@ in {
       ".ideavimrc".source = ../../dotfiles/.ideavimrc;
       ".nirc".source = ../../dotfiles/.nirc;
       ".local/bin/wallpaper".source = ../../dotfiles/.local/bin/wallpaper;
+      # SSH/Tailscale helpers
+      ".local/bin/ssh-mobile".source = ../../dotfiles/.local/bin/ssh-mobile;
+      ".local/bin/mosh-mobile".source = ../../dotfiles/.local/bin/mosh-mobile;
+      # ".local/bin/setup-ssh-keys".source = ../../dotfiles/.local/bin/setup-ssh-keys;
+      # ".local/bin/test-ssh".source = ../../dotfiles/.local/bin/test-ssh;
       ".local/share/fcitx5/themes".source = ../../dotfiles/.local/share/fcitx5/themes;
 
       # Config directories
@@ -35,6 +40,7 @@ in {
       # ".config/dunst".source = ../../dotfiles/.config/dunst;  # Removed: DMS provides notification system
       # ".config/fish".source = ../../dotfiles/.config/fish;  # Removed: Fish managed by NixOS to avoid /nix/store write errors
       ".config/fastfetch".source = ../../dotfiles/.config/fastfetch;
+      ".config/zellij".source = ../../dotfiles/.config/zellij;
       ".config/fcitx5".source = ../../dotfiles/.config/fcitx5;
       ".config/MangoHud/MangoHud.conf".source = ../../dotfiles/.config/MangoHud/MangoHud.conf;
       ".config/gamemode.ini".source = ../../dotfiles/.config/gamemode.ini;
@@ -109,17 +115,17 @@ in {
   programs.dsearch.enable = true;
 
   # Styling
-  stylix.targets.waybar.enable = false;
+  stylix = {
+    targets = {
+      waybar.enable = false;
+      gtk.enable = false;  # Let DMS manage GTK
+    };
+  };
   gtk = {
+    enable = true;
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
-    };
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-    };
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
     };
   };
   qt = {
@@ -147,6 +153,11 @@ in {
         }
       ];
     };
+  };
+
+  # Fish shell configuration
+  programs.fish = {
+    enable = true;
   };
 
   programs.home-manager.enable = true;
