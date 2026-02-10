@@ -5,31 +5,7 @@
 // - Ctrl+T: New tab
 // - Ctrl+W: Close tab
 
-ui {
-    pane_frames {
-        rounded_corners true
-    }
-}
-
-themes {
-    default {
-        fg "#c4a7e7"
-        bg "#191724"
-        red "#eb6f92"
-        green "#ebbcba"
-        yellow "#f6c177"
-        blue "#9ccfd8"
-        magenta "#c4a7e7"
-        orange "#eb6f92"
-        cyan "#9ccfd8"
-        white "#e0def4"
-        black "#191724"
-    }
-}
-
-theme "default"
-
-keybinds clear-defaults true {
+keybinds clear-defaults=true {
     normal {
         ctrl+p { SwitchToMode "Session" }
         ctrl+t { NewTab }
@@ -52,6 +28,6 @@ keybinds clear-defaults true {
 }
 
 session_serialization {
-    serialize_pane_views true
-    serialize_tabs true
+    serialize_pane_views=true
+    serialize_tabs=true
 }
