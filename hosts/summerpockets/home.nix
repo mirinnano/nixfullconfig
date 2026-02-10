@@ -163,7 +163,6 @@ in {
   };
 
   programs.home-manager.enable = true;
-}
 
   # Auto-update service
   systemd.user = {

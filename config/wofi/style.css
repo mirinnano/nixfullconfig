@@ -1,0 +1,69 @@
+/* Glass-morphism Wofi theme */
+window {
+    background-color: rgba(25, 23, 36, 0.85);  /* Rose Pine Moon base with 85% opacity */
+    border: 2px solid rgba(235, 111, 146, 0.3); /* Accent color with 30% opacity */
+    border-radius: 20px;
+    font-family: "JetBrainsMono Nerd Font Mono", sans-serif;
+    font-size: 14px;
+}
+
+#input {
+    background-color: rgba(235, 111, 146, 0.2); /* Accent color subtle background */
+    border: 1px solid rgba(235, 111, 146, 0.4);
+    border-radius: 12px;
+    color: #e0def4;
+    margin: 10px;
+    padding: 12px;
+}
+
+#input:focus {
+    border-color: rgba(235, 111, 146, 0.8);
+    background-color: rgba(235, 111, 146, 0.25);
+}
+
+#inner-box {
+    background-color: transparent;
+    border: none;
+    border-radius: 15px;
+    margin: 0 10px 10px 10px;
+    padding: 10px;
+}
+
+#outer-box {
+    background-color: transparent;
+    margin: 5px;
+    padding: 0;
+}
+
+#scroll {
+    margin: 0;
+    border: none;
+}
+
+#text {
+    color: #e0def4;
+}
+
+#text:selected {
+    color: #191724;
+}
+
+#entry {
+    background-color: rgba(57, 53, 82, 0.4); /* Overlay color with 40% opacity */
+    border-radius: 10px;
+    margin: 5px;
+    padding: 10px;
+}
+
+#entry:selected {
+    background-color: rgba(235, 111, 146, 0.6); /* Accent with 60% opacity */
+    border: 1px solid rgba(235, 111, 146, 0.8);
+}
+
+#img {
+    margin-right: 10px;
+}
+
+#img:selected {
+    border-radius: 10px;
+}

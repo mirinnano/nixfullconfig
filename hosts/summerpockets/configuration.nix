@@ -66,7 +66,7 @@ in
   zramSwap = {
     enable = true;
     algorithm = "zstd";
-    memoryPercent = 50;  # Use 50% of RAM for zram
+    memoryPercent = 25;  # Optimized for 32GB RAM (~8GB zram)
   };
 
   boot = {
@@ -214,9 +214,14 @@ in
     # Firewall configuration
     firewall = {
       allowedTCPPorts = [ 8003 ];
+      allowedTCPPortRanges = [
+        { from = 60000; to = 61000; }  # Mosh
+      ];
+      allowedUDPPortRanges = [
+        { from = 60000; to = 61000; }  # Mosh
+        { from = 51820; to = 51820; }  # WireGuard (Mullvad)
+      ];
       checkReversePath = "loose";
-      # Allow Mullvad VPN
-      allowedUDPPorts = [ 51820 ];  # WireGuard
     };
   };
 
@@ -562,6 +567,7 @@ in
     btop
     lm_sensors
     inxi
+    zellij  # Terminal session manager for SSH
     # nvtopPackages.nvidia
     # anydesk  # Removed - tailscale/ssh is sufficient
 
@@ -571,13 +577,15 @@ in
     cloudflare-warp
     mullvad-vpn
     tailscale
+    mosh  # Mobile shell for SSH over UDP
 
     # Audio and video
     pulseaudio
     pavucontrol
     ffmpeg
     mpv
-   
+    wf-recorder  # Wayland screen recorder
+
 
     # Image and graphics
     imagemagick
@@ -785,7 +793,16 @@ in
     upower.enable = true;
     fstrim.enable = true;
     gvfs.enable = false;  # Disabled - using KDE Dolphin, redundant
-    openssh.enable = true;
+    openssh = {
+      enable = true;
+      settings = {
+        PasswordAuthentication = false;  # Force key-based auth
+        PermitRootLogin = "no";           # Disable root login
+        X11Forwarding = false;            # Disable X11
+        MaxAuthTries = 3;                 # Limit auth attempts
+      };
+      openFirewall = false;  # Use Tailscale only, not public port
+    };
     flatpak.enable = true;
     power-profiles-daemon.enable = false;
     thermald.enable = true;
@@ -966,6 +983,20 @@ in
       dates = "weekly";
       options = "--delete-older-than 7d";
     };
+  };
+
+  # Daily automatic system updates
+  system.autoUpgrade = {
+    enable = true;
+    channel = "https://nixos.org/channels/nixos-unstable";
+    dates = "daily";  # User selected daily updates
+    persistent = true;
+    allowReboot = false;  # Safety: no auto-reboot
+    flags = [
+      "--update-input nixpkgs"
+      "--update-input home-manager"
+      "--commit-lock-file"
+    ];
   };
 
   programs.hyprland.enable = true;

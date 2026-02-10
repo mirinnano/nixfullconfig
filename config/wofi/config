@@ -1,0 +1,13 @@
+--allow-images
+--allow-markup
+--insensitive
+--term=ghostty
+--location=center
+--width=50%
+--height=40%
+--hide-scroll
+--no-actions
+--matching=fuzzy
+--sort-order=alphabetical
+--gtk-dark-theme
+--style=/home/mirin/rudra/config/wofi/style.css

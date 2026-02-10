@@ -25,8 +25,8 @@ copy-on-select = false
 # Selection & Clipboard
 # copy-on-select is already set above
 
-# Shell Integration
-shell-integration = fish
+# Shell Integration - disabled for faster startup
+shell-integration = none
 
 # Scrollback
 scrollback-limit = 10000
@@ -44,4 +44,6 @@ env = LANG=en_US.UTF-8
 
 # Performance optimizations
 gpu-acceleration = true
-gtk-single-instance = false
+gtk-single-instance = true  # Changed to true for faster startup
+confirm-close-surface = false  # Skip confirmation dialog
+resize-increment = 1  # Faster resize
