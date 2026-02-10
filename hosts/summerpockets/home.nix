@@ -28,6 +28,8 @@ in {
       ".ideavimrc".source = ../../dotfiles/.ideavimrc;
       ".nirc".source = ../../dotfiles/.nirc;
       ".local/bin/wallpaper".source = ../../dotfiles/.local/bin/wallpaper;
+      # Auto-update script
+      ".local/bin/auto-update-nixos".source = ../../dotfiles/.local/bin/auto-update-nixos;
       # SSH/Tailscale helpers
       ".local/bin/ssh-mobile".source = ../../dotfiles/.local/bin/ssh-mobile;
       ".local/bin/mosh-mobile".source = ../../dotfiles/.local/bin/mosh-mobile;
@@ -162,3 +164,33 @@ in {
 
   programs.home-manager.enable = true;
 }
+
+  # Auto-update service
+  systemd.user = {
+    services.nixos-auto-update = {
+      Unit = {
+        Description = "NixOS Auto-update and Git Push";
+        After = "network-online.target";
+        Wants = "network-online.target";
+      };
+      Service = {
+        ExecStart = "%h/.local/bin/auto-update-nixos";
+        Type = "oneshot";
+        Nice = 10;
+        IOSchedulingClass = "idle";
+      };
+    };
+    timers.nixos-auto-update = {
+      Unit = {
+        Description = "NixOS Auto-update Timer";
+      };
+      Timer = {
+        OnBootSec = "5min";
+        OnCalendar = "03:00";
+        Persistent = true;
+      };
+      Install = {
+        WantedBy = ["timers.target"];
+      };
+    };
+  };
