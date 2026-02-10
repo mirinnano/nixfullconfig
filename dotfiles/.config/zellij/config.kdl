@@ -1,7 +1,7 @@
-// Zellij configuration - Simplified for mobile SSH
+// Zellij configuration - Minimal for mobile SSH
 
 keybinds clear-defaults=true {
-    shared_except "lock" {
+    shared_except "normal" "locked" {
         ctrl+p { SwitchToMode "Session"; }
     }
     session {
