@@ -51,12 +51,11 @@ in {
     };
 
     # NVIDIA configuration via nvidia-settings
+    # Note: Monitor configuration (refresh rates) is handled by Hyprland, not here
     environment.etc."X11/xorg.conf.d/10-nvidia.conf".text = ''
       Section "Device"
         Identifier "NVIDIA GPU"
         Driver "nvidia"
-        # High refresh rate settings
-        Option "MetaModes" "DP-2: 1920x1080_144 +1920+0 {ForceFullCompositionPipeline=On}, HDMI-A-1: 1920x1080_75 +0+0 {ForceFullCompositionPipeline=On}"
         # Performance optimizations for gaming
         Option "AllowIndirectGLXProtocol" "off"
         Option "TripleBuffer" "on"
