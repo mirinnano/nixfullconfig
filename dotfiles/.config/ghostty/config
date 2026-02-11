@@ -2,8 +2,8 @@
 # Ghostty Configuration
 # ==========================================
 
-# Font - JetBrains Mono for programming
-font-family = JetBrainsMono Nerd Font
+# Font - UDEV Gothic 35NF for programming with Japanese
+font-family = UDEV Gothic 35NF
 font-size = 18
 
 # Theme - Using built-in theme instead of rose-pine
