@@ -23,6 +23,7 @@ in
     inputs.home-manager.nixosModules.default
     inputs.dms.nixosModules.dank-material-shell
     inputs.dms.nixosModules.greeter
+    inputs.lanzaboote.nixosModules.lanzaboote
   ];
 
   # ========================================
@@ -169,11 +170,13 @@ in
         canTouchEfiVariables = true;
         efiSysMountPoint = "/boot";
       };
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 30;
-      };
+      # Lanzaboote replaces systemd-boot module
+      systemd-boot.enable = lib.mkForce false;
       timeout = 5;
+    };
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl";
     };
     tmp = {
       useTmpfs = true;

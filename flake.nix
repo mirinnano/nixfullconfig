@@ -21,6 +21,10 @@
     };
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     hyprpanel.url = "github:Jas-SinghFSU/HyprPanel";
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     {
@@ -29,6 +33,7 @@
       nixCats,
       dms,
       hyprpanel,
+      lanzaboote,
       ...
     }@inputs:
     let
