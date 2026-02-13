@@ -208,7 +208,6 @@ in
         "wlan0"
         "utun*"
       ];
-      dns = "none";
     };
     timeServers = options.networking.timeServers.default ++ [ "pool.ntp.org" ];
     # Firewall configuration
@@ -751,6 +750,12 @@ in
   ];
 
   services = {
+    # Fix DNS to prevent Mullvad from overriding it
+    resolved = {
+      enable = true;
+      fallbackDns = [ "1.1.1.1" "1.0.0.1" ];
+      dnssec = "false";
+    };
     xserver = {
       enable = false;
       xkb = {
