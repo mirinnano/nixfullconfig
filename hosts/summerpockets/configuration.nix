@@ -169,13 +169,11 @@ in
         canTouchEfiVariables = true;
         efiSysMountPoint = "/boot";
       };
-      grub = {
+      systemd-boot = {
         enable = true;
-        device = "nodev";
-        efiSupport = true;
-        useOSProber = true;
         configurationLimit = 30;
       };
+      timeout = 5;
     };
     tmp = {
       useTmpfs = true;
